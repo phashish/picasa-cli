@@ -1,6 +1,6 @@
 = Introduction =
 
-It will provide ftp like interface to Picasa.<br />
+It will provide ftp like interface to Picasa Web.<br />
 You could create, delete albums, upload, delete, edit photos<br />
 and easily browse all photos and albums.
 For more information go to my [http://ashishdisawal.blogspot.com Blog]
@@ -8,3 +8,4 @@ For more information go to my [http://ashishdisawal.blogspot.com Blog]
 = Details =
 
 Currently supports : help and quit commands.
+Yet to come : list, mkalbm, rmalbm, put, get and more ....
