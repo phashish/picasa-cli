@@ -3,7 +3,7 @@
 It will provide ftp like interface to Picasa.<br />
 You could create, delete albums, upload, delete, edit photos<br />
 and easily browse all photos and albums.
-For more information go to my [http://ashishdisawal.blogger.com Blog]
+For more information go to my [http://ashishdisawal.blogspot.com Blog]
 
 = Details =
 
