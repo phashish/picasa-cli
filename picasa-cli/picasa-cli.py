@@ -36,10 +36,12 @@ class PicasaCli(object):
 		self.gd_client.ClientLogin(email, password, source=source)
 
 	def _GetCmd(self):
-		while True:
+		input = ''
+		while input == '':
 			input = raw_input('> ')
-			return str(input)
+		return input.split()
 
+	# cmd 01: help
 	def _PrintHelp(self):
 		"""Displays help of commands for the user to choose from."""
 		print ('\nCurrently supported commands:\n'
@@ -47,10 +49,17 @@ class PicasaCli(object):
 			"Commands yet to be implimented:\n"
 			'list, mkalbm, put, get .. and many more\n')
 
+	# cmd 02: lcwd
 	def _LocalCWD(self):
 		print os.getcwd()
 
-	def _LocalCD(self, dir):
+	# cmd 03: lcd
+	def _LocalCD(self, cmd):
+		try:
+			dir = cmd[1]
+		except IndexError:
+			print "Usage: lcd /local/path/to/cd"
+			return
 		try:
 			os.chdir(dir)
 		except OSError:
@@ -58,42 +67,69 @@ class PicasaCli(object):
 			return
 		print "Current local dir: ", os.getcwd()
 
-	def _LocalList(self, dir):
-		for dirname in os.listdir(dir):
-			print dirname
+	# cmd 04: lls
+	def _LocalList(self, cmd):
+		try:
+			dir = cmd[1]
+		except IndexError:
+			dir = '.'
+		for file in os.listdir(dir):
+			print file
 
+	# cmd 05: lsalbums
 	def _ListAlbums(self):
 		print "Getting the list of albums ... "
+		albums = self.gd_client.GetUserFeed()
+		for album in albums.entry:
+			print 'Title: %-40s, Photos: %4s, ID: %19s' % (album.title.text, album.numphotos.text, album.gphoto_id.text)
 	
-	def _ListPics(self, albumid):
-		print "List of photos in ", albumid
+	# cmd 06: mkalbum
+	def _MakeAlbum(self, cmd):
+		try:
+			opts, args = getopt.getopt(cmd[1:], 't:s:', ['title=', 'summary='])
+		except getopt.error, msg:
+			print "Usage: mkalbm -t='title here' -s='summary here'"
+			return
+		title = ''
+		sumry = 'Created from picasa-cli'
+
+		for opt, arg in opts:
+			if opt in ("-t", "--title"):
+				title = arg
+			elif opt in ("-s", "--summary"):
+				sumry = arg
+
+		print "Trying to create '%s' album .." % title
+
+		new_album = self.gd_client.InsertAlbum(title=title, summary=sumry)
+		print new_album
 
 	def Run(self):
 		"""Prompts the user to choose funtionality to be demonstrated."""
 		try:
 			while True:
 				cmd = self._GetCmd()
-				if cmd == 'help':
+				# cmd 01:
+				if   cmd[0] == 'help':
 					self._PrintHelp()
 				# Commands for local system.
-				elif cmd == 'lcwd':
+				# cmd 02:
+				elif cmd[0] == 'lcwd':
 					self._LocalCWD()
-				elif re.match("^lcd", cmd):
-					dir = re.findall(r'^lcd (\S+)', cmd)[0]
-					self._LocalCD(dir)
-				elif re.match("^lls", cmd):
-					try:
-						dir = re.findall(r'^lls (\S+)', cmd)[0]
-					except IndexError:
-						dir = '.'
-					self._LocalList(dir)
+				# cmd 03:
+				elif cmd[0] == 'lcd':
+					self._LocalCD(cmd)
+				# cmd 04:
+				elif cmd[0] == 'lls':
+					self._LocalList(cmd)
 				# Commands for picasaweb
-				elif cmd == 'lsalbm':
+				# cmd 05:
+				elif cmd[0] == 'lsalbum':
 					self._ListAlbums()
-				elif re.match("^lspics", cmd):
-					albumid = re.findall(r'^lspics (\S+)', cmd)[0]
-					self._ListPics(albumid)
-				elif cmd == 'quit':
+				# cmd 06:
+				elif cmd[0] == 'mkalbum':
+					self._MakeAlbum(cmd)
+				elif cmd[0] == 'quit':
 					print '\nGoodbye.'
 					return
 			
