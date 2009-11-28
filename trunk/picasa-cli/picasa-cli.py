@@ -82,8 +82,11 @@ class PicasaCli(object):
 					dir = re.findall(r'^lcd (\S+)', cmd)[0]
 					self._LocalCD(dir)
 				elif re.match("^lls", cmd):
-					dir = re.findall(r'^lls (\S+)', cmd)[0]
-					self._LocalList(dirs)
+					try:
+						dir = re.findall(r'^lls (\S+)', cmd)[0]
+					except IndexError:
+						dir = '.'
+					self._LocalList(dir)
 				# Commands for picasaweb
 				elif cmd == 'lsalbm':
 					self._ListAlbums()
