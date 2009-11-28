@@ -102,7 +102,7 @@ class PicasaCli(object):
 		print "Trying to create '%s' album .." % title
 
 		new_album = self.gd_client.InsertAlbum(title=title, summary=sumry)
-		print new_album
+		print "New album %s created" % title
 
 	def Run(self):
 		"""Prompts the user to choose funtionality to be demonstrated."""
