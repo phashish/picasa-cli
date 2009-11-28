@@ -45,9 +45,11 @@ class PicasaCli(object):
 	def _PrintHelp(self):
 		"""Displays help of commands for the user to choose from."""
 		print ('\nCurrently supported commands:\n'
-			'help, quit, lcwd, lcd, lls, ls, cd\n'
+			'help, quit\n'
+			'Local commands: lcwd, lcd, lls\n'
+			'PicasaWeb commands: lsalbums, mkalbum\n'
 			"Commands yet to be implimented:\n"
-			'list, mkalbm, put, get .. and many more\n')
+			'put, get .. and many more\n')
 
 	# cmd 02: lcwd
 	def _LocalCWD(self):
@@ -124,7 +126,7 @@ class PicasaCli(object):
 					self._LocalList(cmd)
 				# Commands for picasaweb
 				# cmd 05:
-				elif cmd[0] == 'lsalbum':
+				elif cmd[0] == 'lsalbums':
 					self._ListAlbums()
 				# cmd 06:
 				elif cmd[0] == 'mkalbum':
@@ -132,7 +134,6 @@ class PicasaCli(object):
 				elif cmd[0] == 'quit':
 					print '\nGoodbye.'
 					return
-			
 		except KeyboardInterrupt:
 			print '\nGoodbye.'
 			return
