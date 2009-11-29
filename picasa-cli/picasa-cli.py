@@ -36,6 +36,7 @@ class PicasaCli(object):
 		self.gd_client.ClientLogin(email, password, source=source)
 
 	def _GetCmd(self):
+		""" Gets user input and returns a list"""
 		input = ''
 		while input == '':
 			input = raw_input('> ')
@@ -43,7 +44,6 @@ class PicasaCli(object):
 
 	# cmd 01: help
 	def _PrintHelp(self):
-		"""Displays help of commands for the user to choose from."""
 		print ('\nCurrently supported commands:\n'
 			'help, quit\n'
 			'Local commands: lcwd, lcd, lls\n'
@@ -53,10 +53,12 @@ class PicasaCli(object):
 
 	# cmd 02: lcwd
 	def _LocalCWD(self):
+		"""Prints current local working directory"""
 		print os.getcwd()
 
 	# cmd 03: lcd
 	def _LocalCD(self, cmd):
+		"""Changes the local working directory"""
 		try:
 			dir = cmd[1]
 		except IndexError:
@@ -71,6 +73,7 @@ class PicasaCli(object):
 
 	# cmd 04: lls
 	def _LocalList(self, cmd):
+		"""Lists contents on a local directory"""
 		try:
 			dir = cmd[1]
 		except IndexError:
@@ -87,24 +90,18 @@ class PicasaCli(object):
 	
 	# cmd 06: mkalbum
 	def _MakeAlbum(self, cmd):
-		try:
-			opts, args = getopt.getopt(cmd[1:], 't:s:', ['title=', 'summary='])
-		except getopt.error, msg:
-			print "Usage: mkalbm -t='title here' -s='summary here'"
-			return
 		title = ''
-		sumry = 'Created from picasa-cli'
-
-		for opt, arg in opts:
-			if opt in ("-t", "--title"):
-				title = arg
-			elif opt in ("-s", "--summary"):
-				sumry = arg
-
-		print "Trying to create '%s' album .." % title
-
-		new_album = self.gd_client.InsertAlbum(title=title, summary=sumry)
+		while not title:
+			title = raw_input('Album Title [Required]: ')
+		summary = raw_input('Album Summary [Optional]: ')
+		if not summary: summary = 'Created from picasa-cli'
+		new_album = self.gd_client.InsertAlbum(title=title, summary=summary)
 		print "New album %s created" % title
+	# cmd 07: rmalbum
+	def _RemoveAlbum(self):
+		#album_id = cmd[1]
+		#self.gd_client.Delete(album_id)
+		print "Working on the delete feature."
 
 	def Run(self):
 		"""Prompts the user to choose funtionality to be demonstrated."""
@@ -131,6 +128,9 @@ class PicasaCli(object):
 				# cmd 06:
 				elif cmd[0] == 'mkalbum':
 					self._MakeAlbum(cmd)
+				# cmd 07:
+				elif cmd[0] == 'rmalbum':
+					self._RemoveAlbum()
 				elif cmd[0] == 'quit':
 					print '\nGoodbye.'
 					return
