@@ -1,5 +1,4 @@
 #!/usr/bin/python
-#
 import re
 import sys
 import getopt
@@ -7,12 +6,12 @@ import getpass
 import os.path
 
 class Cli(object):
-
 	def __init__(self, user):
 		self.user = user
 	def _GetCmd(self):
-		input = raw_input('> ')
-#		print input
+		input = ''
+		while input == '':
+			input = raw_input('> ')
 		return input.split()
 
 	def _PrintHelp(self):
@@ -22,25 +21,13 @@ class Cli(object):
 			"Commands yet to be implimented:\n"
 			'ls, mkdir, cd, put, get .. and many more\n')
 
-	def _MakeAlbum(self, cmd):
+	def _MakeAlbum(self):
 		# cmd 06: mkalbum
-		print cmd
-		try:
-			opts, args = getopt.getopt(cmd[1:], 't:s:', ['title=', 'summary='])
-		except getopt.error, msg:
-			print "mkalbm -t='title here' -s='summary here'"
-			return
-		title=''
-		summary=''
-	
-		for option, arg in opts:
-			if option in ("-t", "--title"):
-				title = arg
-			elif option in ("-s", "--summary"):
-				summary = arg
+		title = raw_input('Album Title: ')
+		summary = raw_input('Album Summary: ')
 
-		print "mkalbum : title = %s, summary = %s" % (title, summary)
-
+		print "Final - Title: ", title, "Summary: ", summary
+		
 	def Run(self):
 		try:
 			while True:
@@ -79,7 +66,6 @@ def main():
 #			print 'Password cannot be blank.'
 
 	cli = Cli(user)
-
 	print ("Successfully logged in.\n"
 		   "Type 'help' for list of available commands.\n")
 	cli.Run()
