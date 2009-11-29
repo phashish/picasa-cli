@@ -21,6 +21,8 @@ Now there are 2 sets of commands:<br />
    * `lls <dirname>` : Lists content of a local directory.
    * `lcwd` : Lists the current working directory.
    * `lcd dirname`  : Change the local directory to 'dirname'.
+   * `help` :  Shows little information about available commands
+   * `quit` : Quits the program.
 
 2. Picasa Web Commands:
    * `lsalbums` : Lists all the albums for current user.
