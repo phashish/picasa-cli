@@ -1,5 +1,3 @@
-#Documentation Detailed docs for PicasaCli
-
 = Documentation =
 
 === Program usage: ===
