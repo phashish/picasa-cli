@@ -1,13 +1,26 @@
 #Documentation Detailed docs for PicasaCli
 
-= Introduction =
+= Documentation =
 
-Add your content here.
+=== Program usage: ===
+Typical usage:
 
+[os prompt]$ python picasa-cli.py --user gmail.user
+Password: 
+Successfully logged in to Picasa Web.
+Type 'help' for list of available commands.
 
-= Details =
+> 
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+Now there are 2 sets of commands:
+1. Local commands: Command for local system.
+2. PicasaWeb Commands: Commands to list, add, remove - albums, photos.
+
+1. Local Commands:
+   * lls <dirname> : Lists content of a local directory.
+   * lcwd : Lists the current working directory.
+   * lcd dirname  : Change the local directory to 'dirname'.
+
+2. PicasaWeb Commands:
+   * lsalbums: Lists all the albums for current user.
+   * mkalbum: Add a new album. It does not takes any arguments. It prompts for title and summary. Title is required, summary is optional.
