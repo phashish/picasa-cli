@@ -1,4 +1,4 @@
-`#Documentation Detailed docs for PicasaCli
+#Documentation Detailed docs for PicasaCli
 
 = Documentation =
 
