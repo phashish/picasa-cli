@@ -25,6 +25,6 @@ Now there are 2 sets of commands:<br />
    * `quit` : Quits the program.
 
 2. Picasa Web Commands:
-   * `lsalbums` : Lists all the albums for current user.
+   * `lsalbums` : Lists the album id, album title and number of pics in all the albums for current user.
    * `mkalbum` : Add a new album. It does not takes any arguments.<br />It prompts for title and summary. Title is required, summary is optional.
    * `rmalbum` : Remove an album. It prompts for album title.
