@@ -87,8 +87,8 @@ class PicasaCli(object):
 		print "Getting the list of albums ... "
 		self.albums = self.gd_client.GetUserFeed()
 		print "%19s : Album Title (Num of Pics)" % "Album ID"
-		for self.album in self.albums.entry:
-			print '%s : %s (%s)' % (self.album.gphoto_id.text, self.album.title.text, self.album.numphotos.text)
+		for album in self.albums.entry:
+			print '%s : %s (%s)' % (album.gphoto_id.text, album.title.text, album.numphotos.text)
 	
 	# cmd 06: mkalbum
 	def _MakeAlbum(self):
@@ -97,7 +97,7 @@ class PicasaCli(object):
 			title = raw_input('Album Title [Required]: ')
 		summary = raw_input('Album Summary [Optional]: ')
 		if not summary: summary = 'Created from picasa-cli'
-		new_album = self.gd_client.InsertAlbum(title=title, summary=summary)
+		self.gd_client.InsertAlbum(title=title, summary=summary)
 		print "New album %s created" % title
 
 	# cmd 07: rmalbum
@@ -105,11 +105,11 @@ class PicasaCli(object):
 		self.albums = self.gd_client.GetUserFeed()
 		print "Title of the album to delete:"
 		title = raw_input('Title: ')
-		for self.album in self.albums.entry:
-			if self.album.title.text == title:
+		for album in self.albums.entry:
+			if album.title.text == title:
 				album_found = 1
 				print "Deleting album : %s" % title
-				self.gd_client.Delete(self.album)
+				self.gd_client.Delete(album)
 				break
 			else:
 				album_found = 0
@@ -169,7 +169,7 @@ def main():
 
 	user = ''
 	pw = ''
-	key = ''
+
 	# Process options
 	for option, arg in opts:
 		if option == '--user':
