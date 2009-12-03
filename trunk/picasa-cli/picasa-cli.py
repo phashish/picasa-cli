@@ -34,6 +34,7 @@ class PicasaCli(object):
 		source = 'PicasaCli'
 		self.gd_client = gdata.photos.service.PhotosService()
 		self.gd_client.ClientLogin(email, password, source=source)
+		self.albums = ''
 
 	def _GetCmd(self):
 		""" Gets user input and returns a list"""
@@ -84,12 +85,13 @@ class PicasaCli(object):
 	# cmd 05: lsalbums
 	def _ListAlbums(self):
 		print "Getting the list of albums ... "
-		albums = self.gd_client.GetUserFeed()
-		for album in albums.entry:
-			print 'Title: %-40s, Photos: %4s, ID: %19s' % (album.title.text, album.numphotos.text, album.gphoto_id.text)
+		self.albums = self.gd_client.GetUserFeed()
+		print "%19s : Album Title (Num of Pics)" % "Album ID"
+		for self.album in self.albums.entry:
+			print '%s : %s (%s)' % (self.album.gphoto_id.text, self.album.title.text, self.album.numphotos.text)
 	
 	# cmd 06: mkalbum
-	def _MakeAlbum(self, cmd):
+	def _MakeAlbum(self):
 		title = ''
 		while not title:
 			title = raw_input('Album Title [Required]: ')
@@ -97,12 +99,27 @@ class PicasaCli(object):
 		if not summary: summary = 'Created from picasa-cli'
 		new_album = self.gd_client.InsertAlbum(title=title, summary=summary)
 		print "New album %s created" % title
+
 	# cmd 07: rmalbum
 	def _RemoveAlbum(self):
-		#album_id = cmd[1]
-		#self.gd_client.Delete(album_id)
-		print "Working on the delete feature."
+		self.albums = self.gd_client.GetUserFeed()
+		print "Title of the album to delete:"
+		title = raw_input('Title: ')
+		for self.album in self.albums.entry:
+			if self.album.title.text == title:
+				album_found = 1
+				print "Deleting album : %s" % title
+				self.gd_client.Delete(self.album)
+				break
+			else:
+				album_found = 0
+		if album_found == 0:
+			print "No such album: %s" % title
 
+	# cmd 08: lspics
+	def _ListPics(self, cmd):
+		print "Listing pics from album"
+		
 	def Run(self):
 		"""Prompts the user to choose funtionality to be demonstrated."""
 		try:
@@ -127,10 +144,13 @@ class PicasaCli(object):
 					self._ListAlbums()
 				# cmd 06:
 				elif cmd[0] == 'mkalbum':
-					self._MakeAlbum(cmd)
+					self._MakeAlbum()
 				# cmd 07:
 				elif cmd[0] == 'rmalbum':
 					self._RemoveAlbum()
+				# cmd 08:
+				elif cmd[0] == 'lspics':
+					self._ListPics(cmd)
 				elif cmd[0] == 'quit':
 					print '\nGoodbye.'
 					return
