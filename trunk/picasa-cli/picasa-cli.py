@@ -119,6 +119,16 @@ class PicasaCli(object):
 	# cmd 08: lspics
 	def _ListPics(self, cmd):
 		print "Listing pics from album"
+		album_id = cmd[1]
+		try:
+			photos = self.gd_client.GetFeed(
+				'/data/feed/api/user/default/albumid/%s?kind=photo' % (
+					album_id))
+		except:
+			print "No such album id."
+			return
+		for photo in photos.entry:
+			print 'Photo title:', photo.title.text
 		
 	def Run(self):
 		"""Prompts the user to choose funtionality to be demonstrated."""
