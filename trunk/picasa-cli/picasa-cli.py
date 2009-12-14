@@ -118,7 +118,9 @@ class PicasaCli(object):
 
 	# cmd 08: lspics
 	def _ListPics(self, cmd):
-		print "Listing pics from album"
+		if len(cmd) != 2:
+			print "Usage: lspics <album id>"
+			return
 		album_id = cmd[1]
 		try:
 			photos = self.gd_client.GetFeed(
