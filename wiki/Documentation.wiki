@@ -28,4 +28,4 @@ Now there are 2 sets of commands:<br />
    * `lsalbums` : Lists the album id, album title and number of pics in all the albums for current user.
    * `mkalbum` : Add a new album. It does not takes any arguments.<br />It prompts for title and summary. Title is required, summary is optional.
    * `rmalbum` : Remove an album. It prompts for album title.
-   * `lspics` : List photos from an album. It take album id as an argument.
+   * `lspics` : List photos from an album. It take album id as an argument.<br />If not given any arguments it will prompt and you can give album name or id.
