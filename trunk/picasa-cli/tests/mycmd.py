@@ -47,10 +47,10 @@ class PicasaCli(cmd.Cmd):
 
 	def getAlbumList(self):
 		self.albumDict = {
-			"Album 01": "00001:10",
-			"Album 02": "00002:20",
-			"Album 03": "00003:30",
-			"Album 04": "00004:40"
+			"Album01": "00001:10",
+			"Album02": "00002:20",
+			"Album03": "00003:30",
+			"Album04": "00004:40"
 			}
 #			self.albums = self.gd_client.GetUserFeed()
 #			for album in self.albums.entry:
@@ -71,6 +71,14 @@ class PicasaCli(cmd.Cmd):
 				albumID, albumPics = self.albumDict[album].split(':')
 				print '%19s : %s (%s)' % (albumID, album, albumPics)
 
+	def completedefault(self, text, line, bigidx, endidx):
+		self.getAlbumList()
+		list2Return = []
+		for i in self.albumDict.keys():
+			if i.startswith(text):
+				list2Return.append(i)
+		return list2Return
+				
 	def do_cd(self, line):
 		"""Change to an album or use this album.
 You can use 'cd ..' or simple 'cd' to go to base dir."""
