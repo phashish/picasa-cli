@@ -8,10 +8,12 @@ import os.path
 class Cli(object):
 	def __init__(self, user):
 		self.user = user
+		self.prompt = '>'
+		
 	def _GetCmd(self):
 		input = ''
 		while input == '':
-			input = raw_input('> ')
+			input = raw_input('%s ' % self.prompt)
 		return input.split()
 
 	def _PrintHelp(self):
