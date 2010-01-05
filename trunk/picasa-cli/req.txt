@@ -1,0 +1,13 @@
+Sample usage:
+--
+picasa-cli --user 'username'
+password: ******
+"INTRO"
+> ! ls
+list files in current dir
+> ! cd /dir
+change to dir
+> ls
+list all the albums
+> cd albm_name
+change to album
