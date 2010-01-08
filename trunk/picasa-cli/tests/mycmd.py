@@ -72,34 +72,12 @@ class PicasaCli(cmd.Cmd):
 				albumID, albumPics = self.albumDict[album].split(':')
 				print '%19s : %s (%s)' % (albumID, album, albumPics)
 
-<<<<<<< .mine
-	def complete_cd(self, text, line, begidx, endidx):
-		self.getAlbumList()
-		if not text:
-			List2Return = self.albumDict.keys()[:]
-		else:
-			List2Return = [ f
-							for f in self.albumDict.keys()
-							if f.startswith(text)
-						]
-		return List2Return
-
-=======
-	def completedefault(self, text, line, bigidx, endidx):
-		self.getAlbumList()
-		list2Return = []
-		for i in self.albumDict.keys():
-			if i.startswith(text):
-				list2Return.append(i)
-		return list2Return
-				
->>>>>>> .r32
 	def do_cd(self, line):
-		self.getAlbumList()
 		"""Change to an album or use this album.
 Album name can be auto-completed using 'tab', but it has
 an issue if the album name has a space.
 You can use 'cd ..' or simple 'cd' to go to base dir."""
+		self.getAlbumList()
 		if line == '..' or line == '':
 			print "Going to base dir"
 			self.currAlbum = ''
@@ -111,6 +89,17 @@ You can use 'cd ..' or simple 'cd' to go to base dir."""
 				self.prompt = '%s> ' % line
 			else:
 				print "No such album", line
+
+	def complete_cd(self, text, line, begidx, endidx):
+		self.getAlbumList()
+		if not text:
+			List2Return = self.albumDict.keys()[:]
+		else:
+			List2Return = [ f
+							for f in self.albumDict.keys()
+							if f.startswith(text)
+						]
+		return List2Return
 
 	def do_mkdir(self, line):
 		self.getAlbumList()
