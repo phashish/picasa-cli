@@ -47,10 +47,11 @@ class PicasaCli(cmd.Cmd):
 
 	def getAlbumList(self):
 		self.albumDict = {
-			"Album01": "00001:10",
-			"Album02": "00002:20",
-			"Album03": "00003:30",
-			"Album04": "00004:40"
+			"Album 01": "00001:10",
+			"Album 02": "00002:20",
+			"Album 03": "00003:30",
+			"Album 04": "00004:40",
+			"Photo 05": "00005:40"
 			}
 #			self.albums = self.gd_client.GetUserFeed()
 #			for album in self.albums.entry:
@@ -71,6 +72,19 @@ class PicasaCli(cmd.Cmd):
 				albumID, albumPics = self.albumDict[album].split(':')
 				print '%19s : %s (%s)' % (albumID, album, albumPics)
 
+<<<<<<< .mine
+	def complete_cd(self, text, line, begidx, endidx):
+		self.getAlbumList()
+		if not text:
+			List2Return = self.albumDict.keys()[:]
+		else:
+			List2Return = [ f
+							for f in self.albumDict.keys()
+							if f.startswith(text)
+						]
+		return List2Return
+
+=======
 	def completedefault(self, text, line, bigidx, endidx):
 		self.getAlbumList()
 		list2Return = []
@@ -79,8 +93,12 @@ class PicasaCli(cmd.Cmd):
 				list2Return.append(i)
 		return list2Return
 				
+>>>>>>> .r32
 	def do_cd(self, line):
+		self.getAlbumList()
 		"""Change to an album or use this album.
+Album name can be auto-completed using 'tab', but it has
+an issue if the album name has a space.
 You can use 'cd ..' or simple 'cd' to go to base dir."""
 		if line == '..' or line == '':
 			print "Going to base dir"
@@ -95,8 +113,12 @@ You can use 'cd ..' or simple 'cd' to go to base dir."""
 				print "No such album", line
 
 	def do_mkdir(self, line):
+		self.getAlbumList()
 		"""Create a new album"""
-		print "Creating new album: ", line
+		if self.albumDict.has_key(line.strip()):
+			print "Error: Album name already exists."
+		else:
+			print "Creating new album:", line, ":"
 	
 	def do_rm(self, line):
 		"""Remove an album"""
