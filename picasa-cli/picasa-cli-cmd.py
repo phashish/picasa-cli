@@ -54,7 +54,9 @@ class PicasaCli(cmd.Cmd):
 			print "Getting list of photos in the album: ", self.currAlbum
 			photos = self.gd_client.GetFeed(
 				'/data/feed/api/user/default/albumid/%s?kind=photo' % (
-				album_id))
+				self.albumDict[self.currAlbum].split(':')[0]))
+			for photo in photos.entry:
+				print 'Photo title:', photo.title.text
 		else:
 			print "Getting the list of albums"
 			self.getAlbumList()
@@ -64,21 +66,57 @@ class PicasaCli(cmd.Cmd):
 				print '%s : %s (%s)' % (albumID, album, albumPics)
 
 	def do_cd(self, line):
-		"""Change to an album or use this album"""
+		"""Change to an album or use this album
+Album name can be auto-completed using 'tab', but it has
+an issue if the album name has a space.
+You can use 'cd ..' or simple 'cd' to go to base dir."""
+		self.getAlbumList()
 		if line == '..' or line == '':
 			print "Going to base dir"
 			self.currAlbum = ''
 			self.prompt = '> '
 		else:
 			print "Using the album: ", line
-			self.currAlbum = line
-			self.prompt = '%s> ' % line
+			if self.albumDict.has_key(line.strip()):
+				self.currAlbum = line
+				self.prompt = '%s> ' % line
+			else:
+				print "No such album", line
+
+	def complete_cd(self, text, line, begidx, endidx):
+		self.getAlbumList()
+		if not text:
+			List2Return = self.albumDict.keys()[:]
+		else:
+			List2Return = [ f
+							for f in self.albumDict.keys()
+							if f.startswith(text)
+						]
+		return List2Return
 
 	def do_mkdir(self, line):
-		print "Creating new album: ", line
+		"""Creating new album"""
+		self.getAlbumList()
+		while not line:
+			line = raw_input('Album Title [Required]: ')
+		if self.albumDict.has_key(line.strip()):
+			print "Error: Album name already exists."
+		else:
+			summary = raw_input('Album Summary [Optional]: ')
+			if not summary: summary = 'Created from picasa-cli'
+			self.gd_client.InsertAlbum(title=line, summary=summary)
+			print "Created new album:", line, ":"
 	
 	def do_rm(self, line):
-		print "Removing:", line
+		"""Remove an album"""
+		while not line:
+			line = raw_input('Album Title [Required]: ')
+		if self.albumDict.has_key(line.strip()):
+			self.gd_client.Delete(line)
+			print "Deleted album: ", line
+		else:
+			print "No such album: ", line
+
 
 def main():
 	"""FTP like cli for picasa web albums."""
