@@ -8,6 +8,7 @@ import gdata.photos.service
 
 INTRO = '-- PicasaCli --'
 HELP = '-- Help --'
+
 class PicasaCli(cmd.Cmd):
 	def authenticate(self, email, password):
 		source = 'PicasaCli'
@@ -28,12 +29,13 @@ class PicasaCli(cmd.Cmd):
 				print "PWD: ", dir
 			except OSError:
 				print "No such file/dir :", dir
-				retur
+				return
 		else:
 			output = os.popen(line).read()
 			print output
 
 	def do_EOF(self, line):
+		"""Good Bye"""
 		print "Good Bye"
 		return True
 
@@ -44,17 +46,23 @@ class PicasaCli(cmd.Cmd):
 		print ''
 
 	def getAlbumList(self):
-			self.albums = self.gd_client.GetUserFeed()
-			for album in self.albums.entry:
-				self.albumDict[album.title.text] = ':'.join([album.gphoto_id.text, album.numphotos.text])
-		
+#		self.albumDict = {
+#			"Album 01": ["00001", 10, 'alb01'],
+#			"Album 02": ["00002", 20, 'alb02'],
+#			"Album 03": ["00003", 30, 'alb03'],
+#			"Photo 05": ["00005", 40, 'alb04']
+#		}
+		self.albums = self.gd_client.GetUserFeed()
+		for album in self.albums.entry:
+			self.albumDict[album.title.text] = [str(album.gphoto_id.text), album.numphotos.text, album]
+
 	def do_ls(self, line):
 		"""List albums or photos in an album"""
 		if self.currAlbum:
 			print "Getting list of photos in the album: ", self.currAlbum
 			photos = self.gd_client.GetFeed(
 				'/data/feed/api/user/default/albumid/%s?kind=photo' % (
-				self.albumDict[self.currAlbum].split(':')[0]))
+				self.albumDict[self.currAlbum][0]))
 			for photo in photos.entry:
 				print 'Photo title:', photo.title.text
 		else:
@@ -62,7 +70,7 @@ class PicasaCli(cmd.Cmd):
 			self.getAlbumList()
 			print "%19s : Album Title (Num of Pics)" % "Album ID"
 			for album in self.albumDict:
-				albumID, albumPics = self.albumDict[album].split(':')
+				albumID, albumPics = self.albumDict[album][0:2]
 				print '%s : %s (%s)' % (albumID, album, albumPics)
 
 	def do_cd(self, line):
@@ -105,30 +113,63 @@ You can use 'cd ..' or simple 'cd' to go to base dir."""
 			summary = raw_input('Album Summary [Optional]: ')
 			if not summary: summary = 'Created from picasa-cli'
 			self.gd_client.InsertAlbum(title=line, summary=summary)
-			print "Created new album:", line, ":"
+			print "Created new album:", line
 	
 	def do_rm(self, line):
 		"""Remove an album"""
-		while not line:
-			line = raw_input('Album Title [Required]: ')
+		self.getAlbumList()
 		if self.albumDict.has_key(line.strip()):
-			self.gd_client.Delete(line)
-			print "Deleted album: ", line
+			try:
+				self.gd_client.Delete(self.albumDict[line][2])
+			except:
+				print "Error: Could not delete album", line
 		else:
-			print "No such album: ", line
+			print "No such album", line
 
+	def do_put(self, line):
+		"""Copy photos into an album"""
+		pass
+	
+	def complete_cp(self, text, line, begidx, endidx):
+		pass
 
 def main():
 	"""FTP like cli for picasa web albums."""
 	# Parse command line options
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], '', ['user=', 'pw='])
+		opts, files = getopt.getopt(sys.argv[1:], '', ['user=', 'pw=', 'list', 'albumID='])
 	except getopt.error, msg:
-		print 'python picasa-cli.py --user [username] --pw [password] '
+		print '''
+Usage:
+    python picasa-cli.py <Options>
+Options:
+    --user=username     ; Use this picasa username
+    --pw=password
+    --list          ; List the albums in picasa-web account
+    --albumID=album ID      ; Can be found by running only --list
+
+Sample usage:
+    bash$ python picasa-cli.py --username=picasa-user --list
+    Password: 
+    Getting the list of albums
+           Album ID : Album Title (Num of Pics)
+              00005 : Photo 05 (40)
+              00004 : Album 04 (40)
+              00003 : Album 03 (30)
+              00002 : Album 02 (20)
+    
+    bash$ python picasa-cli.py --username=picasa-user --albumID=00005 *jpg
+    Password:
+    Uploading file : pic-01.jpg
+    Uploading file : pic-02.jpg
+    Uploading file : pic-03.jpg
+'''
 		sys.exit(2)
 
 	user = ''
 	pw = ''
+	list = ''
+	albumID = ''
 
 	# Process options
 	for option, arg in opts:
@@ -136,6 +177,23 @@ def main():
 			user = arg
 		elif option == '--pw':
 			pw = arg
+		elif option == '--list':
+			list = 1
+		elif option == '--albumID':
+			albumID = arg
+
+	if list and albumID:
+		print "Error: --list and --aid cannot be used at the same time"
+		sys.exit(2)
+	if list and files:
+		print "Error: --list and --files cannot be used at the same time"
+		sys.exit(2)
+	if albumID and not files:
+		print "Error: you forgot to give the list of files to upload"
+		sys.exit(2)
+	if not albumID and files:
+		print "Error: you forgot to give the album ID to upload the files to"
+		sys.exit(2)
 
 	while not user:
 		user = raw_input('Please enter your username: ')
@@ -151,9 +209,14 @@ def main():
 		print 'Invalid user credentials given.'
 		return
 
-	print ("Successfully logged in to Picasa Web.\n"
-		   "Type 'help' for list of available commands.\n")
-	cli.cmdloop()
+	print ("Successfully logged in to Picasa Web.\n")
+	if list:
+		line = ''
+		cli.do_ls(line)
+	elif albumID:
+		print albumID, files
+	else:
+		cli.cmdloop()
 
 if __name__ == '__main__':
 	main()
