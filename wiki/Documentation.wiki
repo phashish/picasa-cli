@@ -9,23 +9,47 @@ Typical usage:
 [os prompt]$ python picasa-cli.py --user gmail.user
 Password: 
 Successfully logged in to Picasa Web.
-Type 'help' for list of available commands.
 
-> 
+> help
+
+Documented commands (type help <topic>):
+========================================
+EOF  cd  ls  mkdir  put  rm  shell
+
+Undocumented commands:
+======================
+help
+
+ > ls
+Getting the list of albums
+           Album ID : Album Title (Num of Pics)
+5260000000000000001 : Album 01 (10)
+5260000000000000002 : Album 02 (49)
+5310000000000000003 : Album 03 (28)
+
+> mkdir Album 04
 }}}
-Now there are 2 sets of commands:<br />
-1. Local commands: Command for local system.<br />
-2. Picasa Web Commands: Commands to list, add, remove - albums, photos.<br />
+*Non interactive usage:*
 
-1. Local Commands:
-   * `lls <dirname>` : Lists content of a local directory.
-   * `lcwd` : Lists the current working directory.
-   * `lcd dirname`  : Change the local directory to 'dirname'.
-   * `help` :  Shows little information about available commands
-   * `quit` : Quits the program.
+First list the albums you have and copy the Album ID into which you want to upload the pics.
+{{{
+[os prompt]$ ./picasa-cli.py --user gmail.user --list
+Password: 
+Successfully logged in to Picasa Web.
 
-2. Picasa Web Commands:
-   * `lsalbums` : Lists the album id, album title and number of pics in all the albums for current user.
-   * `mkalbum` : Add a new album. It does not takes any arguments.<br />It prompts for title and summary. Title is required, summary is optional.
-   * `rmalbum` : Remove an album. It prompts for album title.
-   * `lspics` : List photos from an album. It take album id as an argument.<br />If not given any arguments it will prompt and you can give album name or id.
+Getting the list of albums
+           Album ID : Album Title (Num of Pics)
+5260000000000000001 : Album 01 (10)
+5260000000000000002 : Album 02 (49)
+5310000000000000003 : Album 03 (28)
+5310000000000000004 : Album 04 (0)
+}}}
+Then upload you pictures :
+{{{
+[os prompt]$ ./picasa-cli-cmd.py --user ashish.disawal --albumID 5310000000000000004 ~/Aashish/ToUpload/pic-000*
+Password: 
+Successfully logged in to Picasa Web.
+
+/home/ashish/ToUpload/pic-00023.jpg uploaded
+/home/ashish/ToUpload/pic-00025.jpg uploaded
+}}}
