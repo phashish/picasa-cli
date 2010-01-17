@@ -113,23 +113,31 @@ You can use 'cd ..' or simple 'cd' to go to base dir."""
 			summary = raw_input('Album Summary [Optional]: ')
 			if not summary: summary = 'Created from picasa-cli'
 #			self.gd_client.InsertAlbum(title=line, summary=summary)
+			self.albumDict[line] = ['000', '10', line]
 			print "Created new album:", line
 
 	def do_rm(self, line):
 		"""Remove an album"""
 		self.getAlbumList()
 		if self.albumDict.has_key(line.strip()):
-			self.gd_client.Delete(self.albumDict[line][2])
+#			self.gd_client.Delete(self.albumDict[line][2])
+			del self.albumDict[line]
 			print "Album:", line, "deleted"
 		else:
 			print "No such album", line
 	
 	def do_put(self, line):
 		"""Copy photos into an album"""
-		pass
+#		print line[-1], line[:-1]
+		album_url = '/data/feed/api/user/default/albumid/%s' % line[-1]
+		for filename in line[:-1]:
+			print filename
+
+
 	
-	def complete_cp(self, text, line, begidx, endidx):
-		pass
+#	def complete_cp(self, text, line, begidx, endidx):
+#		if not text:
+			
 
 def main():
 	"""FTP like cli for picasa web albums."""
@@ -156,11 +164,12 @@ Sample usage:
               00003 : Album 03 (30)
               00002 : Album 02 (20)
 	
-	bash$ python picasa-cli.py --username=picasa-user --albumID=00005 *jpg
-	Password:
-	Uploading file : pic-01.jpg
-	Uploading file : pic-02.jpg
-	Uploading file : pic-03.jpg
+	bash$ ./picasa-cli-cmd.py --user ashish.disawal --albumID 00005 ~/Aashish/ToUpload/pic-000*
+	Password: 
+	Successfully logged in to Picasa Web.
+
+	/home/divya/Aashish/ToUpload/pic-00023.jpg uploaded
+	/home/divya/Aashish/ToUpload/pic-00025.jpg uploaded
 '''
 		sys.exit(2)
 
@@ -212,7 +221,8 @@ Sample usage:
 		line = ''
 		cli.do_ls(line)
 	elif albumID:
-		print albumID, files
+		files.append(albumID)
+		cli.do_put(files)
 	else:
 		cli.cmdloop()
 	

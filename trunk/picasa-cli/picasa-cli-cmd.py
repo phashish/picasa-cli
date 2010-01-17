@@ -14,7 +14,7 @@ class PicasaCli(cmd.Cmd):
 		source = 'PicasaCli'
 		self.gd_client = gdata.photos.service.PhotosService()
 		self.gd_client.ClientLogin(email, password, source=source)
-	#	self.gd_client = ''
+#		self.gd_client = ''
 		self.albums = ''
 		self.currAlbum = ''
 		self.prompt = ' > '
@@ -119,23 +119,31 @@ You can use 'cd ..' or simple 'cd' to go to base dir."""
 		"""Remove an album"""
 		self.getAlbumList()
 		if self.albumDict.has_key(line.strip()):
-			try:
-				self.gd_client.Delete(self.albumDict[line][2])
-			except:
-				print "Error: Could not delete album", line
+			self.gd_client.Delete(self.albumDict[line][2])
+			del self.albumDict[line]
+			print "Album:", line, "deleted"
 		else:
 			print "No such album", line
-
+	
 	def do_put(self, line):
 		"""Copy photos into an album"""
-		pass
-	
-	def complete_cp(self, text, line, begidx, endidx):
-		pass
+#		print line[-1], line[:-1]
+		album_url = '/data/feed/api/user/default/albumid/%s' % line[-1]
+		for filename in line[:-1]:
+			photoTitle = os.path.basename(filename)
+			photo = self.gd_client.InsertPhotoSimple(album_url, photoTitle, 
+		    	'', filename, content_type='image/jpeg')
+			print "%s uploaded" % filename
+
+
+
+
+
+
 
 def main():
 	"""FTP like cli for picasa web albums."""
-	# Parse command line options
+#	Parse command line options
 	try:
 		opts, files = getopt.getopt(sys.argv[1:], '', ['user=', 'pw=', 'list', 'albumID='])
 	except getopt.error, msg:
@@ -171,7 +179,7 @@ Sample usage:
 	list = ''
 	albumID = ''
 
-	# Process options
+#	Process options
 	for option, arg in opts:
 		if option == '--user':
 			user = arg
@@ -214,7 +222,8 @@ Sample usage:
 		line = ''
 		cli.do_ls(line)
 	elif albumID:
-		print albumID, files
+		files.append(albumID)
+		cli.do_put(files)
 	else:
 		cli.cmdloop()
 
