@@ -53,3 +53,7 @@ Successfully logged in to Picasa Web.
 /home/ashish/ToUpload/pic-00023.jpg uploaded
 /home/ashish/ToUpload/pic-00025.jpg uploaded
 }}}
+
+
+= To Do =
+1) Add a recursive option to make the directory as album and upload photos.
